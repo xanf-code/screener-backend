@@ -1,0 +1,25 @@
+services:
+    postgres:
+      image: "postgres:16"
+      container_name: postgres_screener
+      ports:
+        - "5411:5432"
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: darshan
+        POSTGRES_DB: users
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      deploy:
+        resources:
+          limits:
+            memory: 700m
+      networks:
+        - screener
+
+volumes:
+  postgres_data:
+
+networks:
+  screener:
+    driver: bridge
