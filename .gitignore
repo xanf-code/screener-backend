@@ -1,3 +1,4 @@
 user-service-backend/target/
 user-service-backend/.idea/
 .idea
+user-service-backend/.env

@@ -1,34 +1,33 @@
 server:
-    port: 8080
+  port: ${USER_SERVICE_PORT}
+
 spring:
-    mail:
-      host: smtp.gmail.com
-      port: 587
-      username: darshanaswath@gmail.com
-      password: izzy xxcy edxq uiey
-      properties:
-        mail.smtp.auth: true
-        mail.smtp.starttls.enable: true
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
-    datasource:
-        driver-class-name: org.postgresql.Driver
-        url: jdbc:postgresql://localhost:5411/users?currentSchema=public
-        username: postgres
-        password: darshan
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
 
-    flyway:
-      baseline-version: 1.0
-      clean-disabled: true
-      validate-on-migrate: true
-      out-of-order: false
-      enabled: true
+  flyway:
+    baseline-version: 1.0
+    clean-disabled: true
+    validate-on-migrate: true
+    out-of-order: false
+    enabled: true
 
-#    sql:
-#        init:
-#            mode: always
-#            schema-locations: classpath:schema.sql
+  config:
+    import: optional:file:.env
 
 security:
   jwt:
-    secret-key: 45481136c4d52069d409d3c1ed9276de4bee8512f54d270dd4c121a33438bd249c4ea6a080a08114eb3b0a809be892a863228c92fdc4b8f34c7c02979a3697531c6227a629dc540bc6e9e9f020230ba1fe314dd86728e0c50804c6370154be178b14c3db204ce98a49130c3ca75cd7823f6159fa8face4dc387d1426d25d497e4ed87d51ccccadf94bfb6010847d3a3f01d1358544f73a75ece3dc9194e1c778e3fa60c093f3c965085d260b581c927a474da8d5f68658834e8f7ab414620c7a85420ca4a8911a2588b16d2c063ec674ffd720c66bd361959d24a2188c6b5edda82b55ffec82f02519086584075249e80f810bb7403eb554f3e07589bf0019d1
-    expiration-time: 3600000
+    secret-key: ${JWT_SECRET_KEY}
+    expiration-time: ${JWT_EXPIRATION}
