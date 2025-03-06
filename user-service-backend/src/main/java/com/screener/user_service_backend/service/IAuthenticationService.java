@@ -17,7 +17,7 @@ public interface IAuthenticationService {
 
     void resendVerificationCode(String email);
 
-    void resetPassword(String email);
+    void forgotPassword(String email);
 
     User updateOldPasswordToNewPassword(String resetPasswordToken, String newPassword);
 }

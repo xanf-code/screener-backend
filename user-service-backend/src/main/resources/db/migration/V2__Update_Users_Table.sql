@@ -1,0 +1,2 @@
+ALTER TABLE public.users ALTER COLUMN updated_at TYPE TIMESTAMP;
+ALTER TABLE public.users ALTER COLUMN created_at TYPE TIMESTAMP;

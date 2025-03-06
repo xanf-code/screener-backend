@@ -103,7 +103,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     }
 
     @Override
-    public void resetPassword(String email) {
+    public void forgotPassword(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -113,8 +113,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             // TODO: Send user reset password email
 //            sendVerificationEmail(user);
             userRepository.save(user);
-        } else {
-            throw new EmailOrUsernameAlreadyExistsException("User not found");
         }
     }
 

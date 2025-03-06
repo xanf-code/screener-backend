@@ -1,9 +1,7 @@
 package com.screener.user_service_backend.controller;
 import com.screener.user_service_backend.constants.UserConstants;
-import com.screener.user_service_backend.dto.request.UpdatePasswordDTO;
-import com.screener.user_service_backend.dto.request.UserLoginRequestDTO;
-import com.screener.user_service_backend.dto.request.UserRegisterRequestDTO;
-import com.screener.user_service_backend.dto.request.VerifyUserDTO;
+import com.screener.user_service_backend.dto.request.*;
+import com.screener.user_service_backend.dto.response.GenericResponseDTO;
 import com.screener.user_service_backend.dto.response.UpdatePasswordResponseDTO;
 import com.screener.user_service_backend.dto.response.UserLoginResponseDTO;
 import com.screener.user_service_backend.dto.response.UserRegisterResponseDTO;
@@ -19,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @Tag(name = "Authentication", description = "The Authentication API")
 @RestController
@@ -41,7 +37,7 @@ public class UserAuthController {
                 .firstName(userRegisterRequestDTO.getFirstName())
                 .lastName(userRegisterRequestDTO.getLastName())
                 .statusCode(UserConstants.STATUS_200)
-                .statusMessage(UserConstants.MESSAGE_201)
+                .statusMessage(UserConstants.MESSAGE_201_USER_CREATED)
                 .email(userRegisterRequestDTO.getEmail())
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -49,7 +45,7 @@ public class UserAuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDTO> authenticate(@RequestBody UserLoginRequestDTO loginUserDto){
+    public ResponseEntity<UserLoginResponseDTO> authenticate(@Valid @RequestBody UserLoginRequestDTO loginUserDto){
         User authenticatedUser = authenticationService.login(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
         UserLoginResponseDTO authenticatedUserResponse = UserLoginResponseDTO.builder()
@@ -63,40 +59,47 @@ public class UserAuthController {
                 .body(authenticatedUserResponse);
     }
 
-    @PostMapping("/verify")
-    public ResponseEntity<?> verifyUser(@RequestBody VerifyUserDTO verifyUserDto) {
-        try {
-            authenticationService.verifyUser(verifyUserDto);
-            // TODO: Have a success message with verification DTO
-            return ResponseEntity.ok("Account verified successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @PostMapping("/verify-user")
+    public ResponseEntity<GenericResponseDTO> verifyUser(@Valid @RequestBody VerifyUserDTO verifyUserDto) {
+        authenticationService.verifyUser(verifyUserDto);
+        GenericResponseDTO genericVerifyUserResponseDTO = GenericResponseDTO.builder()
+                .message(UserConstants.MESSAGE_200_ACCOUNT_VERIFIED)
+                .status(UserConstants.STATUS_200)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(genericVerifyUserResponseDTO);
     }
 
-    @PostMapping("/resend")
-    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
-        try {
-            authenticationService.resendVerificationCode(email);
-            return ResponseEntity.ok("Verification code sent");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @PostMapping("/resend-code")
+    public ResponseEntity<GenericResponseDTO> resendVerificationCode(@Valid @RequestBody ResetVerificationCodeRequestDTO resetVerificationCodeRequestDTO) {
+        authenticationService.resendVerificationCode(resetVerificationCodeRequestDTO.getEmail());
+        GenericResponseDTO genericResendCodeResponseDTO = GenericResponseDTO.builder()
+                .message(UserConstants.MESSAGE_200_RESEND_VERIFICATION_CODE)
+                .status(UserConstants.STATUS_200)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(genericResendCodeResponseDTO);
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam String email) {
-        authenticationService.resetPassword(email);
-        return ResponseEntity.ok("Password reset email sent");
+    @PostMapping("/forgot-password")
+    public ResponseEntity<GenericResponseDTO> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO) {
+        // TODO: See what can be done hger? maybe have a separate DTO instead of handling here
+        if(forgotPasswordRequestDTO.getEmail() == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
+        authenticationService.forgotPassword(forgotPasswordRequestDTO.getEmail());
+        GenericResponseDTO genericResendEmailResponseDTO = GenericResponseDTO.builder()
+                .message(UserConstants.MESSAGE_200_RESEND_VERIFICATION_EMAIL)
+                .status(UserConstants.STATUS_200)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(genericResendEmailResponseDTO);
     }
 
     @PostMapping("/update-password")
-    public ResponseEntity<?> updateOldPasswordToNewPassword(@Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
+    public ResponseEntity<UpdatePasswordResponseDTO> updateOldPasswordToNewPassword(@Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
         User user = authenticationService.updateOldPasswordToNewPassword(updatePasswordDTO.getToken(), updatePasswordDTO.getNewPassword());
         UpdatePasswordResponseDTO updatePasswordResponseDTO = UpdatePasswordResponseDTO.builder()
                 .userName(user.getUsername())
-                .message(UserConstants.MESSAGE_200)
+                .message(UserConstants.MESSAGE_200_USER_UPDATED)
                 .build();
-        return ResponseEntity.ok(updatePasswordResponseDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(updatePasswordResponseDTO);
     }
 }
