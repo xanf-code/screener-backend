@@ -8,10 +8,16 @@ import com.screener.user_service_backend.exception.EmailOrUsernameAlreadyExistsE
 import com.screener.user_service_backend.mapper.UserMapper;
 import com.screener.user_service_backend.repository.UserRepository;
 import com.screener.user_service_backend.service.IAuthenticationService;
+import com.screener.user_service_backend.service.security.JwtService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +33,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailServiceImpl emailServiceimpl;
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
     @Override
     public void signup(UserRegisterRequestDTO registerUser){
@@ -132,6 +140,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         user.setResetPasswordExpiresAt(null);
         user.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(user);
+    }
+
+    @Override
+    public Boolean validateToken(String token) {
+        try {
+            return jwtService.isTokenValid(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private void sendVerificationEmail(User user) {

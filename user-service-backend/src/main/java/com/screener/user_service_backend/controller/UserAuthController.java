@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ public class UserAuthController {
 
     @Operation(summary = "Create a new user", description = "Create a new user", method = "POST", tags = {"Authentication"})
     @ApiResponse(responseCode = "200", description = "User created successfully")
-    @PostMapping(value = "/register")
+    @PostMapping("/register")
     public ResponseEntity<UserRegisterResponseDTO> createAuthUser(@Valid @RequestBody UserRegisterRequestDTO userRegisterRequestDTO) {
         authenticationService.signup(userRegisterRequestDTO);
         UserRegisterResponseDTO createdUserResponse = UserRegisterResponseDTO.builder()
@@ -101,5 +102,15 @@ public class UserAuthController {
                 .message(UserConstants.MESSAGE_200_USER_UPDATED)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(updatePasswordResponseDTO);
+    }
+
+    @PostMapping("/validate-token")
+    public ResponseEntity<GenericResponseDTO> validateToken(@NotEmpty(message = "Token cannot be empty") @RequestParam String token) {
+        boolean isValid = authenticationService.validateToken(token);
+        GenericResponseDTO genericResendEmailResponseDTO = GenericResponseDTO.builder()
+                .message(isValid ? UserConstants.MESSAGE_200_VALID_TOKEN : UserConstants.MESSAGE_400_INVALID_TOKEN)
+                .status(isValid ? UserConstants.STATUS_200 : UserConstants.STATUS_400)
+                .build();
+        return ResponseEntity.status(isValid ? HttpStatus.OK : HttpStatus.BAD_REQUEST).body(genericResendEmailResponseDTO);
     }
 }

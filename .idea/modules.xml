@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/esg-screener-backend.iml" filepath="$PROJECT_DIR$/.idea/esg-screener-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/user-service-backend/user-service-backend.iml" filepath="$PROJECT_DIR$/user-service-backend/user-service-backend.iml" />
     </modules>
   </component>
 </project>

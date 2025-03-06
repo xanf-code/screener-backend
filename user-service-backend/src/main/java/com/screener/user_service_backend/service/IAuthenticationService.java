@@ -4,6 +4,7 @@ import com.screener.user_service_backend.dto.request.UserLoginRequestDTO;
 import com.screener.user_service_backend.dto.request.UserRegisterRequestDTO;
 import com.screener.user_service_backend.dto.request.VerifyUserDTO;
 import com.screener.user_service_backend.entity.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface IAuthenticationService {
     void forgotPassword(String email);
 
     User updateOldPasswordToNewPassword(String resetPasswordToken, String newPassword);
+
+    Boolean validateToken(String token);
 }

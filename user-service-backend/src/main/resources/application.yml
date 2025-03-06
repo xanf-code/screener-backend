@@ -27,7 +27,19 @@ spring:
   config:
     import: optional:file:.env
 
+  application:
+    name: user-service-backend
+
 security:
   jwt:
     secret-key: ${JWT_SECRET_KEY}
     expiration-time: ${JWT_EXPIRATION}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost

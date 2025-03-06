@@ -15,6 +15,8 @@ public class UserConstants {
 
     public static final String MESSAGE_201_USER_CREATED = "User created successfully";
     public static final String MESSAGE_200_USER_UPDATED = "User updated successfully";
+    public static final String MESSAGE_200_VALID_TOKEN = "JWT Token is valid";
+    public static final String MESSAGE_400_INVALID_TOKEN = "JWT Token is invalid";
     public static final String MESSAGE_200_RESEND_VERIFICATION_CODE = "Verification code resent successfully";
     public static final String MESSAGE_200_RESEND_VERIFICATION_EMAIL = "Password reset email sent";
     public static final String MESSAGE_200_ACCOUNT_VERIFIED = "Account verified successfully";

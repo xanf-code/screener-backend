@@ -8,11 +8,27 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="user-service-backend" />
+        <module name="eureka-server" />
+      </profile>
+      <profile name="Annotation profile for screener-api-gateway" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="fraud-detection-service-backend" />
+        <module name="screener-service-backend" />
+        <module name="screener-api-gateway" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="eureka-server" options="-parameters" />
+      <module name="fraud-detection-service-backend" options="-parameters" />
+      <module name="screener-api-gateway" options="-parameters" />
+      <module name="screener-service-backend" options="-parameters" />
       <module name="user-service-backend" options="-parameters" />
     </option>
   </component>

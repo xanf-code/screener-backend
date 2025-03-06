@@ -5,6 +5,10 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/user-service-backend/pom.xml" />
+        <option value="$PROJECT_DIR$/screener-service-backend/pom.xml" />
+        <option value="$PROJECT_DIR$/fraud-detection-service-backend/pom.xml" />
+        <option value="$PROJECT_DIR$/eureka-server/pom.xml" />
+        <option value="$PROJECT_DIR$/screener-api-gateway/pom.xml" />
       </list>
     </option>
   </component>
