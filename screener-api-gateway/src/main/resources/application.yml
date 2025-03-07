@@ -7,20 +7,26 @@ spring:
 
   cloud:
     gateway:
-      mvc:
-        routes:
-          - id: fraud-detection-service
-            uri: lb://fraud-detection-service-backend
-            predicates:
-              - Path=/api/v1/fraud/**
-          - id: screener-service
-            uri: lb://screener-service-backend
-            predicates:
-              - Path=/api/v1/screener/**
-          - id: user-service
-            uri: lb://user-service-backend
-            predicates:
-              - Path=/api/v1/auth/**
+#      mvc:
+      routes:
+        - id: fraud-detection-service
+          uri: lb://FRAUD-DETECTION-SERVICE-BACKEND
+          predicates:
+            - Path=/api/v1/fraud/**
+          filters:
+            - AuthenticationFilter
+
+        - id: screener-service
+          uri: lb://SCREENER-SERVICE-BACKEND
+          predicates:
+            - Path=/api/v1/screener/**
+          filters:
+            - AuthenticationFilter
+
+        - id: user-service
+          uri: lb://USER-SERVICE-BACKEND
+          predicates:
+            - Path=/api/v1/auth/**
 
 eureka:
   client:

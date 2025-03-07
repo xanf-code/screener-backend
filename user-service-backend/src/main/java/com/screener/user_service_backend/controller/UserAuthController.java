@@ -14,11 +14,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Tag(name = "Authentication", description = "The Authentication API")
 @RestController
 @RequestMapping(value = "/api/v1/auth", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -106,7 +108,9 @@ public class UserAuthController {
 
     @PostMapping("/validate-token")
     public ResponseEntity<GenericResponseDTO> validateToken(@NotEmpty(message = "Token cannot be empty") @RequestParam String token) {
+        log.info("Starting to validate token");
         boolean isValid = authenticationService.validateToken(token);
+        log.info("Token validity: {}", isValid);
         GenericResponseDTO genericResendEmailResponseDTO = GenericResponseDTO.builder()
                 .message(isValid ? UserConstants.MESSAGE_200_VALID_TOKEN : UserConstants.MESSAGE_400_INVALID_TOKEN)
                 .status(isValid ? UserConstants.STATUS_200 : UserConstants.STATUS_400)
