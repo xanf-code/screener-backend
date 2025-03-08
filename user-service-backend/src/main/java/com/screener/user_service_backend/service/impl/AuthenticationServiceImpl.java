@@ -94,7 +94,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     }
 
     @Override
-    public void resendVerificationCode(String email) {
+        public void resendVerificationCode(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();

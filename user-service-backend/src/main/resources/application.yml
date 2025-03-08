@@ -28,7 +28,7 @@ spring:
     import: optional:file:.env
 
   application:
-    name: user-service-backend
+    name: USER-SERVICE-BACKEND
 
 security:
   jwt:
@@ -43,3 +43,4 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     hostname: localhost
+    appname: USER-SERVICE-BACKEND
