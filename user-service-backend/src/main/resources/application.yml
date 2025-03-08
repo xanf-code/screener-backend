@@ -24,9 +24,6 @@ spring:
     out-of-order: false
     enabled: true
 
-  config:
-    import: optional:file:.env
-
   application:
     name: USER-SERVICE-BACKEND
 

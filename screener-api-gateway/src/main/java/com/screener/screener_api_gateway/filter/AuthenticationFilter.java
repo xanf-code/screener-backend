@@ -1,18 +1,15 @@
 package com.screener.screener_api_gateway.filter;
 
-import com.screener.screener_api_gateway.dto.response.GenericResponseDTO;
+import com.screener.screener_api_gateway.errors.CustomResponseStatusException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
@@ -38,12 +35,9 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                     return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing authorization header"));
                 }
-
                 String token = authHeader.substring(7);
-                log.info("Validating token: {}", token);
-
                 return webClient.post()
-                        .uri("lb://USER-SERVICE-BACKEND/validate-token?token={token}", token)
+                        .uri("lb://USER-SERVICE-BACKEND/api/v1/auth/validate-token?token={token}", token)
                         .retrieve()
                         .toBodilessEntity()
                         .then(chain.filter(exchange))
@@ -54,14 +48,15 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     }
 
     private Mono<Void> handleError(Throwable ex) {
-        if (ex instanceof HttpClientErrorException) {
-            HttpStatus status = (HttpStatus) ((HttpClientErrorException) ex).getStatusCode();
-            String message = (status == HttpStatus.BAD_REQUEST) ? "Invalid token" : "Unauthorized access";
-            return Mono.error(new ResponseStatusException(status, message));
+        if (ex instanceof WebClientResponseException webEx) {
+            HttpStatus status = (HttpStatus) webEx.getStatusCode();
+            String message = "Invalid or expired token, please refresh token to continue";
+            return Mono.error(new CustomResponseStatusException(status, message));
         }
         log.error("Service unavailable: {}", ex.getMessage());
-        return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Authentication service unavailable"));
+        return Mono.error(new CustomResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Authentication service unavailable"));
     }
+
 
     public static class Config {}
 }
