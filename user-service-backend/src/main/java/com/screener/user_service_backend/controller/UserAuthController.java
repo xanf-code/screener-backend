@@ -11,6 +11,8 @@ import com.screener.user_service_backend.service.security.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -48,9 +50,18 @@ public class UserAuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDTO> authenticate(@Valid @RequestBody UserLoginRequestDTO loginUserDto){
+    public ResponseEntity<UserLoginResponseDTO> authenticate(@Valid @RequestBody UserLoginRequestDTO loginUserDto, HttpServletResponse response){
         User authenticatedUser = authenticationService.login(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
+
+        // TODO: If this does not automatically set the cookie, we can remove this and set it in the frontend
+        Cookie jwtCookie = new Cookie("jwt", jwtToken);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(24 * 60 * 60);
+        response.addCookie(jwtCookie);
+
         UserLoginResponseDTO authenticatedUserResponse = UserLoginResponseDTO.builder()
                 .username(loginUserDto.getUsername())
                 .statusCode(UserConstants.STATUS_200)
