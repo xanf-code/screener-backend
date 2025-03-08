@@ -54,14 +54,6 @@ public class UserAuthController {
         User authenticatedUser = authenticationService.login(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
-        // TODO: If this does not automatically set the cookie, we can remove this and set it in the frontend
-        Cookie jwtCookie = new Cookie("jwt", jwtToken);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(jwtCookie);
-
         UserLoginResponseDTO authenticatedUserResponse = UserLoginResponseDTO.builder()
                 .username(loginUserDto.getUsername())
                 .statusCode(UserConstants.STATUS_200)
