@@ -2,15 +2,6 @@ server:
   port: ${USER_SERVICE_PORT}
 
 spring:
-  mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
-
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${POSTGRES_URL}
@@ -26,6 +17,12 @@ spring:
 
   application:
     name: USER-SERVICE-BACKEND
+
+  rabitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
 
 security:
   jwt:

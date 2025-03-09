@@ -9,6 +9,7 @@
         <option value="$PROJECT_DIR$/fraud-detection-service-backend/pom.xml" />
         <option value="$PROJECT_DIR$/eureka-server/pom.xml" />
         <option value="$PROJECT_DIR$/screener-api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/utility-services/pom.xml" />
       </list>
     </option>
   </component>

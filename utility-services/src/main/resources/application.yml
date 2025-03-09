@@ -1,0 +1,21 @@
+server:
+    port: 8090
+
+spring:
+    application:
+        name: UTILITY-SERVICE
+
+    rabitmq:
+        host: localhost
+        port: 5672
+        username: guest
+        password: guest
+
+    mail:
+      host: ${MAIL_HOST}
+      port: ${MAIL_PORT}
+      username: ${MAIL_USERNAME}
+      password: ${MAIL_PASSWORD}
+      properties:
+        mail.smtp.auth: true
+        mail.smtp.starttls.enable: true

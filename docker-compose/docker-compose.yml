@@ -1,19 +1,10 @@
 services:
-    postgres:
-      image: "postgres:16"
-      container_name: postgres_screener
+    rabbit-mq:
+      image: "rabbitmq:3-management"
+      container_name: rabbitmq_screener
       ports:
-        - "5411:5432"
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: darshan
-        POSTGRES_DB: users
-      volumes:
-        - postgres_data:/var/lib/postgresql/data
-      deploy:
-        resources:
-          limits:
-            memory: 700m
+        - "5672:5672"
+        - "15672:15672"
       networks:
         - screener
 

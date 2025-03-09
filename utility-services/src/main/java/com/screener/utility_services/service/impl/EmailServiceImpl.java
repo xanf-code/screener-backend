@@ -1,4 +1,4 @@
-package com.screener.user_service_backend.service.impl;
+package com.screener.utility_services.service.impl;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

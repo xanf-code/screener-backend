@@ -6,18 +6,13 @@ import com.screener.user_service_backend.dto.request.VerifyUserDTO;
 import com.screener.user_service_backend.entity.User;
 import com.screener.user_service_backend.exception.EmailOrUsernameAlreadyExistsException;
 import com.screener.user_service_backend.mapper.UserMapper;
+import com.screener.user_service_backend.messaging.UserMessageProducer;
 import com.screener.user_service_backend.repository.UserRepository;
 import com.screener.user_service_backend.service.IAuthenticationService;
 import com.screener.user_service_backend.service.security.JwtService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +27,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final EmailServiceImpl emailServiceimpl;
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final UserMessageProducer userMessageProducer;
 
     @Override
     public void signup(UserRegisterRequestDTO registerUser){
@@ -48,7 +42,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);
-        sendVerificationEmail(user);
+        userMessageProducer.sendToEmailQueue(user);
         userRepository.save(user);
     }
 
@@ -103,7 +97,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             }
             user.setVerificationCode(generateVerificationCode());
             user.setVerificationExpiresAt(LocalDateTime.now().plusHours(1));
-            sendVerificationEmail(user);
+            userMessageProducer.sendToEmailQueue(user);
             userRepository.save(user);
         } else {
             throw new EmailOrUsernameAlreadyExistsException("User not found");
@@ -148,30 +142,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             return jwtService.isTokenValid(token);
         } catch (Exception e) {
             return false;
-        }
-    }
-
-    private void sendVerificationEmail(User user) {
-        String subject = "Account Verification";
-        String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
-        String htmlMessage = "<html>"
-                + "<body style=\"font-family: Arial, sans-serif;\">"
-                + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                + "<h2 style=\"color: #333;\">Welcome to our app!</h2>"
-                + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
-                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-                + "<h3 style=\"color: #333;\">Verification Code:</h3>"
-                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
-                + "</div>"
-                + "</div>"
-                + "</body>"
-                + "</html>";
-
-        try {
-            emailServiceimpl.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
-        } catch (MessagingException e) {
-            // TODO: Handle email sending exception
-            e.printStackTrace();
         }
     }
 

@@ -1,4 +1,4 @@
-package com.screener.user_service_backend.config;
+package com.screener.utility_services.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
